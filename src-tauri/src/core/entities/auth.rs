@@ -7,6 +7,8 @@ pub struct TokenPair {
 
 #[derive(Debug, thiserror::Error)]
 pub enum AuthError {
+    #[error("email already exists")]
+    EmailAlreadyExists,
     #[error("invalid email or password")]
     InvalidCredentials,
     #[error("invalid request")]
@@ -19,4 +21,9 @@ pub enum AuthError {
     Storage(String),
     #[error("unexpected error: {0}")]
     Unexpected(String),
+}
+
+pub struct User {
+    pub id: u64,
+    pub email: String,
 }

@@ -11,11 +11,7 @@ pub struct AppState {
     pub http_client: HttpAuthClient,
     pub access_token: Mutex<Option<String>>,
     pub token_store: StrongholdTokenStore,
-}
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+    pub user_email: Mutex<Option<String>>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -33,14 +29,15 @@ pub fn run() {
                 http_client: HttpAuthClient::new(reqwest::Client::new()),
                 access_token: Mutex::new(None),
                 token_store,
+                user_email: None.into(),
             });
 
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            greet,
             interface::commands::auth_commands::login,
             interface::commands::auth_commands::try_restore_session,
+            interface::commands::auth_commands::register,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

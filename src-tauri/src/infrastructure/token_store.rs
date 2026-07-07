@@ -46,4 +46,5 @@ impl StrongholdTokenStore {
             .map_err(|e| AuthError::Storage(e.to_string()))?;
         Ok(bytes.map(|b| String::from_utf8_lossy(&b).to_string()))
     }
+
 }

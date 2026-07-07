@@ -1,14 +1,12 @@
 import {createSignal} from "solid-js";
+import {A, useNavigate} from "@solidjs/router";
 import {Input} from "../../../components/Input.tsx";
 import {Button} from "../../../components/Button.tsx";
 import {login} from "../../../services/tauri/client";
 import "./Login.css";
 
-interface LoginProps {
-    onSuccess: () => void;
-}
-
-function Login(props: LoginProps) {
+function Login() {
+    const navigate = useNavigate();
     const [error, setError] = createSignal<string | null>(null);
     const [pending, setPending] = createSignal(false);
 
@@ -22,7 +20,7 @@ function Login(props: LoginProps) {
         setError(null);
         try {
             await login(email, password);
-            props.onSuccess();
+            navigate("/");
         } catch (err) {
             setError(String(err));
         } finally {
@@ -44,6 +42,11 @@ function Login(props: LoginProps) {
             {error() && <p class="login-error">{error()}</p>}
             <Button text={pending() ? "Connexion..." : "Se connecter"} color={"primary"} action={undefined} type={"submit"}></Button>
         </form>
+
+        <p>
+            Pas encore de compte ?{" "}
+            <A href="/register">Créer un compte</A>
+        </p>
       </>
     );
 }
