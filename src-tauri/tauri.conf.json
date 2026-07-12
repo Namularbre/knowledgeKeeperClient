@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "knowledgekeeperclient",
+        "title": "Knowledge Keeper",
         "width": 800,
         "height": 600
       }
