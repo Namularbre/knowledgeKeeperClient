@@ -11,7 +11,6 @@ pub struct AppState {
     pub http_client: HttpAuthClient,
     pub access_token: Mutex<Option<String>>,
     pub token_store: StrongholdTokenStore,
-    pub user_email: Mutex<Option<String>>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -29,7 +28,6 @@ pub fn run() {
                 http_client: HttpAuthClient::new(reqwest::Client::new()),
                 access_token: Mutex::new(None),
                 token_store,
-                user_email: None.into(),
             });
 
             Ok(())

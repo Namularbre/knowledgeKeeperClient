@@ -4,6 +4,7 @@ import {Input} from "../../../components/Input.tsx";
 import {Button} from "../../../components/Button.tsx";
 import {login} from "../../../services/tauri/client";
 import "./Login.css";
+import {loadCurrentUser} from "../session.ts";
 
 function Login() {
     const navigate = useNavigate();
@@ -20,6 +21,7 @@ function Login() {
         setError(null);
         try {
             await login(email, password);
+            await loadCurrentUser();
             navigate("/");
         } catch (err) {
             setError(String(err));
