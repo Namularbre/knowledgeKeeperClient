@@ -1,5 +1,5 @@
-use crate::core::entities::auth::{AuthError, TokenPair, User};
-use crate::interface::dtos::auth_dto::RegisterResponseDto;
+use crate::core::entities::auth::{AuthError, TokenPair};
+use crate::interface::dtos::auth_dto::{UserResponse};
 
 pub const API_BASE_URL: &str = "http://localhost:8080";
 
@@ -34,7 +34,7 @@ impl HttpAuthClient {
             .await
     }
 
-    pub async fn register(&self, email: &str, password: &str) -> Result<User, AuthError> {
+    pub async fn register(&self, email: &str, password: &str) -> Result<UserResponse, AuthError> {
         let resp = self
             .http
             .post(format!("{}{}", self.base_url, "/auth/register"))
@@ -45,15 +45,12 @@ impl HttpAuthClient {
 
         match resp.status() {
             reqwest::StatusCode::CREATED => {
-                let dto: RegisterResponseDto = resp
+                let dto: UserResponse = resp
                     .json()
                     .await
                     .map_err(|e| AuthError::Unexpected(e.to_string()))?;
 
-                Ok(User {
-                    id: dto.id,
-                    email: dto.email,
-                })
+                Ok(dto)
             }
             reqwest::StatusCode::BAD_REQUEST => {
                 Err(AuthError::InvalidCredentials)
@@ -64,6 +61,34 @@ impl HttpAuthClient {
             reqwest::StatusCode::INTERNAL_SERVER_ERROR => {
                 Err(AuthError::Unexpected("Une erreur est survenue".to_string()))
             },
+            status => Err(AuthError::Unexpected(format!("unexpected status {status}"))),
+        }
+    }
+
+    pub async fn me(&self, access_token: &str) -> Result<UserResponse, AuthError> {
+        let resp = self
+            .http
+            .get(format!("{}{}", self.base_url, "/auth/me"))
+            .bearer_auth(access_token)
+            .send()
+            .await
+            .map_err(|e| AuthError::Network(e.to_string()))?;
+
+        match resp.status() {
+            reqwest::StatusCode::OK => {
+                let dto: UserResponse = resp
+                    .json()
+                    .await
+                    .map_err(|e| AuthError::Unexpected(e.to_string()))?;
+
+                Ok(dto)
+            }
+            reqwest::StatusCode::UNAUTHORIZED => {
+                Err(AuthError::InvalidCredentials)
+            }
+            reqwest::StatusCode::INTERNAL_SERVER_ERROR => {
+                Err(AuthError::Unexpected("Une erreur est survenue".to_string()))
+            }
             status => Err(AuthError::Unexpected(format!("unexpected status {status}"))),
         }
     }

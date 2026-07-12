@@ -4,7 +4,7 @@ pub struct LoginResponseDto {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct RegisterResponseDto {
+pub struct UserResponse  {
     pub id: u64,
     pub email: String,
 }

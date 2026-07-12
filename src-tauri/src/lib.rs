@@ -38,6 +38,7 @@ pub fn run() {
             interface::commands::auth_commands::login,
             interface::commands::auth_commands::try_restore_session,
             interface::commands::auth_commands::register,
+            interface::commands::auth_commands::get_user,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
