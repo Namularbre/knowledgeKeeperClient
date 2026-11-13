@@ -1,4 +1,4 @@
-use crate::interface::dtos::auth_dto::LoginResponseDto;
+use crate::interface::dtos::auth_dto::{LoginResponseDto, UserResponse};
 use crate::AppState;
 
 #[tauri::command]
@@ -40,4 +40,32 @@ pub async fn try_restore_session(state: tauri::State<'_, AppState>) -> Result<Lo
         }
         Err(_) => Ok(LoginResponseDto { authenticated: false }),
     }
+}
+
+#[tauri::command]
+pub async fn register(state: tauri::State<'_, AppState>, email: String, password: String) -> Result<UserResponse, String> {
+    let user = state
+        .http_client
+        .register(&email, &password)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(user)
+}
+
+#[tauri::command]
+pub async fn get_user(state: tauri::State<'_, AppState>) -> Result<UserResponse, String> {
+    let token = state.access_token
+        .lock()
+        .unwrap()
+        .clone()
+        .ok_or("not authenticated".to_string())?;
+
+    let user = state
+        .http_client
+        .me(&token)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(user)
 }

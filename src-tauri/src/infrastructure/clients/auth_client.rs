@@ -1,4 +1,5 @@
 use crate::core::entities::auth::{AuthError, TokenPair};
+use crate::interface::dtos::auth_dto::{UserResponse};
 
 pub const API_BASE_URL: &str = "http://localhost:8080";
 
@@ -31,6 +32,65 @@ impl HttpAuthClient {
     pub async fn refresh(&self, refresh_token: &str) -> Result<TokenPair, AuthError> {
         self.exchange_credentials("/auth/refresh", &serde_json::json!({ "refresh_token": refresh_token }))
             .await
+    }
+
+    pub async fn register(&self, email: &str, password: &str) -> Result<UserResponse, AuthError> {
+        let resp = self
+            .http
+            .post(format!("{}{}", self.base_url, "/auth/register"))
+            .json(&serde_json::json!({"email": email, "password": password}))
+            .send()
+            .await
+            .map_err(|e| AuthError::Network(e.to_string()))?;
+
+        match resp.status() {
+            reqwest::StatusCode::CREATED => {
+                let dto: UserResponse = resp
+                    .json()
+                    .await
+                    .map_err(|e| AuthError::Unexpected(e.to_string()))?;
+
+                Ok(dto)
+            }
+            reqwest::StatusCode::BAD_REQUEST => {
+                Err(AuthError::InvalidCredentials)
+            },
+            reqwest::StatusCode::CONFLICT => {
+                Err(AuthError::EmailAlreadyExists)
+            },
+            reqwest::StatusCode::INTERNAL_SERVER_ERROR => {
+                Err(AuthError::Unexpected("Une erreur est survenue".to_string()))
+            },
+            status => Err(AuthError::Unexpected(format!("unexpected status {status}"))),
+        }
+    }
+
+    pub async fn me(&self, access_token: &str) -> Result<UserResponse, AuthError> {
+        let resp = self
+            .http
+            .get(format!("{}{}", self.base_url, "/auth/me"))
+            .bearer_auth(access_token)
+            .send()
+            .await
+            .map_err(|e| AuthError::Network(e.to_string()))?;
+
+        match resp.status() {
+            reqwest::StatusCode::OK => {
+                let dto: UserResponse = resp
+                    .json()
+                    .await
+                    .map_err(|e| AuthError::Unexpected(e.to_string()))?;
+
+                Ok(dto)
+            }
+            reqwest::StatusCode::UNAUTHORIZED => {
+                Err(AuthError::InvalidCredentials)
+            }
+            reqwest::StatusCode::INTERNAL_SERVER_ERROR => {
+                Err(AuthError::Unexpected("Une erreur est survenue".to_string()))
+            }
+            status => Err(AuthError::Unexpected(format!("unexpected status {status}"))),
+        }
     }
 
     async fn exchange_credentials(&self, path: &str, body: &serde_json::Value) -> Result<TokenPair, AuthError> {

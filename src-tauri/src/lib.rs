@@ -13,11 +13,6 @@ pub struct AppState {
     pub token_store: StrongholdTokenStore,
 }
 
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -38,9 +33,10 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            greet,
             interface::commands::auth_commands::login,
             interface::commands::auth_commands::try_restore_session,
+            interface::commands::auth_commands::register,
+            interface::commands::auth_commands::get_user,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
