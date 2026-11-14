@@ -2,15 +2,14 @@ mon-projet-tauri/
 ├── src/                          # FRONTEND (SolidJS)
 │   ├── assets/                   # Images, icônes, polices globales
 │   ├── components/               # Composants UI réutilisables et "bêtes" (sans état global)
-│   │   ├── Button.tsx            # <button> Bootstrap, transmet tous les attributs natifs
-│   │   ├── Input.tsx             # label + <input>, transmet tous les attributs natifs
+│   │   ├── FormField.tsx         # Form.Group + Form.Label + Form.Control (solid-bootstrap)
 │   │   └── LoadingText.tsx
 │   ├── layout/                   # Éléments de mise en page qui lisent l'état global
 │   │   └── Header.tsx            # Barre de navigation (via useAuth)
 │   ├── features/                 # Architecture orientée "Features"
 │   │   ├── auth/
 │   │   │   ├── AuthProvider.tsx  # Contexte d'authentification + hook useAuth()
-│   │   │   └── components/       # Login, Register, Me, RequireAuth (garde des routes privées)
+│   │   │   └── components/       # Login, Register, Me, LogoutButton, RequireAuth (garde)
 │   │   ├── home/components/
 │   │   └── errors/components/    # NotFound
 │   ├── primitives/               # Primitives réactives réutilisables (createSubmit…)
@@ -38,8 +37,10 @@ mon-projet-tauri/
 
 ## Règles de conception (frontend)
 
+- Les composants Bootstrap (Button, Form, Alert, Navbar, Modal…) viennent de `solid-bootstrap`.
+  On n'écrit un composant maison dans `components/` que pour assembler plusieurs d'entre eux.
 - `components/` ne contient que des composants sans état global : ils reçoivent tout par props
-  et étendent les attributs HTML natifs avec `splitProps` / `mergeProps`.
+  et transmettent le reste avec `splitProps` / `mergeProps`.
 - Ne jamais déstructurer `props` ni lire `props.x` dans une constante : la réactivité se perd.
 - L'état global passe par un Provider + un hook (`useAuth()`). Aucun setter n'est exporté :
   on modifie l'état via les actions du contexte (`login`, `register`…).

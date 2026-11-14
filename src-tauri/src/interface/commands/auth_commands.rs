@@ -69,3 +69,27 @@ pub async fn get_user(state: tauri::State<'_, AppState>) -> Result<UserResponse,
 
     Ok(user)
 }
+
+/// Révoque le refresh token côté API, puis efface la session locale.
+///
+/// Si la révocation échoue et que `force` vaut false, la session locale est
+/// conservée et l'erreur est renvoyée : l'utilisateur peut réessayer, au lieu
+/// de laisser un token encore valide côté serveur sans le savoir.
+/// Avec `force` à true, la session locale est effacée quoi qu'il arrive.
+#[tauri::command]
+pub async fn logout(state: tauri::State<'_, AppState>, force: bool) -> Result<(), String> {
+    let refresh_token = state.token_store.read_refresh_token().map_err(|e| e.to_string())?;
+
+    if let Some(refresh_token) = refresh_token {
+        if let Err(e) = state.http_client.logout(&refresh_token).await {
+            if !force {
+                return Err(e.to_string());
+            }
+        }
+    }
+
+    state.token_store.delete_refresh_token().map_err(|e| e.to_string())?;
+    *state.access_token.lock().unwrap() = None;
+
+    Ok(())
+}

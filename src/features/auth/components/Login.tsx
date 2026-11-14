@@ -1,7 +1,7 @@
 import {Show} from "solid-js";
 import {A, useNavigate} from "@solidjs/router";
-import {Input} from "../../../components/Input.tsx";
-import {Button} from "../../../components/Button.tsx";
+import {Button} from "solid-bootstrap";
+import {FormField} from "../../../components/FormField.tsx";
 import {createSubmit} from "../../../primitives/createSubmit.ts";
 import {useAuth} from "../AuthProvider.tsx";
 import "./Login.css";
@@ -23,12 +23,8 @@ function Login() {
               <h1 class="h3 text-center mb-4">Connexion</h1>
 
               <form onSubmit={onSubmit}>
-                  <div class="mb-3">
-                      <Input label="Email" name="email" id="email" type="email" autocomplete="email" required placeholder="Ex: jean.dupont@example.com"/>
-                  </div>
-                  <div class="mb-3">
-                      <Input label="Mot de passe" name="password" id="password" type="password" autocomplete="current-password" required/>
-                  </div>
+                  <FormField label="Email" name="email" id="email" type="email" autocomplete="email" required placeholder="Ex: jean.dupont@example.com"/>
+                  <FormField label="Mot de passe" name="password" id="password" type="password" autocomplete="current-password" required/>
                   <Show when={error()}>
                       <div class="alert alert-danger" role="alert">{error()}</div>
                   </Show>

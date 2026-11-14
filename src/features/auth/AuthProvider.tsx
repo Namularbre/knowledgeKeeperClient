@@ -10,6 +10,8 @@ interface AuthContextValue {
     status: Accessor<AuthStatus>;
     login(email: string, password: string): Promise<void>;
     register(email: string, password: string): Promise<void>;
+    /** Throws if the API could not revoke the session (unless `force`). */
+    logout(force?: boolean): Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue>();
@@ -48,6 +50,10 @@ function AuthProvider(props: ParentProps) {
         },
         async register(email, password) {
             await client.register(email, password);
+        },
+        async logout(force = false) {
+            await client.logout(force);
+            mutate(null);
         },
     };
 
