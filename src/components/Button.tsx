@@ -1,29 +1,22 @@
-import {mergeProps} from "solid-js";
+import {mergeProps, splitProps, type JSX} from "solid-js";
 
-interface ButtonProps {
-    text: string,
-    color: string,
-    action: Function | undefined,
-    type: "submit" | "reset" | "button" | "menu" | undefined,
+export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
+    /** Bootstrap variant: primary, secondary, outline-primary... */
+    variant?: string;
 }
 
 /**
- * Generic button component
- * @param props
- * @constructor
+ * Generic button: a thin wrapper around <button> that adds Bootstrap classes.
+ * Every native attribute (type, disabled, onClick...) is forwarded as is.
  */
 function Button(props: ButtonProps) {
-    const finalProps = mergeProps({defaultText: "Click me", defaultColor: "primary", defaultType: "button"}, props);
+    const merged = mergeProps({variant: "primary", type: "button" as const}, props);
+    const [local, rest] = splitProps(merged, ["variant", "class", "children"]);
 
     return (
-        <>
-            <button type={finalProps.type} background-color={finalProps.color} onclick={(e) => {
-                if (props.action !== undefined) {
-                    e.preventDefault();
-                    props.action(e);
-                }
-            }}>{props.text}</button>
-        </>
+        <button {...rest} class={`btn btn-${local.variant}${local.class ? ` ${local.class}` : ""}`}>
+            {local.children}
+        </button>
     );
 }
 

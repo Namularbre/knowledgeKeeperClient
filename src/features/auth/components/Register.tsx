@@ -30,27 +30,34 @@ function Register() {
     };
 
     return (
-      <>
-        <h1>Register</h1>
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h1 class="h3 text-center mb-4">Créer un compte</h1>
 
-        <form onsubmit={handleSubmit}>
-            <div>
-                <Input displayName={"Email"} name={"email"} id={"email"} required={true} classes={undefined} value={undefined} type={"text"} placeholder={"Ex: jean.dupont@gmail.com"}></Input>
+              <form onsubmit={handleSubmit}>
+                  <div class="mb-3">
+                      <Input displayName={"Email"} name={"email"} id={"email"} required={true} classes={undefined} value={undefined} type={"text"} placeholder={"Ex: jean.dupont@gmail.com"}></Input>
+                  </div>
+                  <div class="mb-3">
+                      <Input displayName={"Mot de passe"} name={"password"} id={"password"} required={true} classes={undefined} value={undefined} type={"password"} placeholder={"Ex: 145esdhfirkfr54454efsdfsdf"}></Input>
+                  </div>
+                  {error() && <div class="alert alert-danger" role="alert">{error()}</div>}
+                  <div class="d-grid mb-3">
+                      <Button text={pending() ? "Tentative de création du compte..." : "Créer mon compte"} color={"primary"} action={undefined} type={"submit"}></Button>
+                  </div>
+              </form>
+
+              <div class="alert alert-info small mb-0">Une fois votre compte créé, vous devrez vous connecter.</div>
             </div>
-            <div>
-                <Input displayName={"mot de passe"} name={"password"} id={"password"} required={true} classes={undefined} value={undefined} type={"password"} placeholder={"Ex: 145esdhfirkfr54454efsdfsdf"}></Input>
+            <div class="card-footer text-center small">
+              Déjà un compte ?{" "}
+              <A href="/login">Se connecter</A>
             </div>
-            {error() && <p class="alert alert-danger">{error()}</p>}
-            <Button text={pending() ? "Tentative de création du compte..." : "Créer mon compte"} color={"primary"} action={undefined} type={"submit"}></Button>
-        </form>
-
-        <p class="alert alert-info">Une fois votre compte créer, vous devrez vous connecter.</p>
-
-        <p>
-            Déjà un compte ?{" "}
-            <A href="/login">Se connecter</A>
-        </p>
-      </>
+          </div>
+        </div>
+      </div>
     );
 }
 

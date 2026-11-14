@@ -1,7 +1,8 @@
 import {createSignal, onMount, Show} from "solid-js";
-import {useLocation, useNavigate, type RouteSectionProps} from "@solidjs/router";
+import {A, useLocation, useNavigate, type RouteSectionProps} from "@solidjs/router";
 import {tryRestoreSession} from "./services/tauri/client";
 import {user, loadCurrentUser} from "./features/auth/session";
+import {LoadingText} from "./components/LoadingText.tsx";
 import "./App.css";
 
 /**
@@ -32,16 +33,21 @@ function App(props: RouteSectionProps) {
   });
 
   return (
-    <main class="container">
-      <Show when={ready()} fallback={<p>Chargement…</p>}>
-        <Show when={user()}>
-          <nav class="navbar bg-body-teriary">
-            <div>Bonjour {user()?.email} !</div>
-          </nav>
-        </Show>
-        {props.children}
+    <>
+      <Show when={user()}>
+        <nav class="navbar bg-body-tertiary border-bottom mb-4">
+          <div class="container">
+            <A href="/" class="navbar-brand fw-semibold">Knowledge Keeper</A>
+            <span class="navbar-text">Bonjour {user()?.email} !</span>
+          </div>
+        </nav>
       </Show>
-    </main>
+      <main class="container py-4">
+        <Show when={ready()} fallback={<LoadingText></LoadingText>}>
+          {props.children}
+        </Show>
+      </main>
+    </>
   );
 }
 

@@ -1,25 +1,22 @@
+import {splitProps, type JSX} from "solid-js";
 
-interface InputProps {
-    name: string,
-    displayName: string,
-    value: string|undefined,
-    required: boolean,
-    id: string,
-    classes: string|undefined,
-    placeholder: string|undefined,
-    type: "text" | "number" | "date" | "color" | "file" | "password"
+export interface InputProps extends JSX.InputHTMLAttributes<HTMLInputElement> {
+    /** Text of the label shown above the input */
+    label: JSX.Element;
+    id: string;
 }
 
 /**
- * A generic input div with a label
- * @param props
- * @constructor
+ * Generic labelled input. Every native attribute (type, name, required,
+ * autocomplete...) is forwarded to the <input>.
  */
 function Input(props: InputProps) {
+    const [local, rest] = splitProps(props, ["label", "id", "class"]);
+
     return (
         <>
-            <label for={props.id}>{props.displayName}</label>
-            <input id={props.id} name={props.name} class={props.classes} value={props.value} required={props.required} placeholder={props.placeholder}/>
+            <label class="form-label" for={local.id}>{local.label}</label>
+            <input {...rest} id={local.id} class={local.class ?? "form-control"}/>
         </>
     );
 }

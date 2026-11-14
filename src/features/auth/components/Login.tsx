@@ -31,25 +31,32 @@ function Login() {
     };
 
     return (
-      <>
-        <h1>Connexion</h1>
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h1 class="h3 text-center mb-4">Connexion</h1>
 
-        <form onsubmit={handleSubmit}>
-            <div>
-                <Input displayName={"email"} name={"email"} id={"email"} required={true} classes={undefined} value={undefined} type={"text"} placeholder={"Ex: jean.dupont@example.com"}></Input>
+              <form onsubmit={handleSubmit}>
+                  <div class="mb-3">
+                      <Input displayName={"Email"} name={"email"} id={"email"} required={true} classes={undefined} value={undefined} type={"text"} placeholder={"Ex: jean.dupont@example.com"}></Input>
+                  </div>
+                  <div class="mb-3">
+                      <Input displayName={"Mot de passe"} name={"password"} id={"password"} required={true} classes={undefined} value={undefined} type={"password"} placeholder={undefined}></Input>
+                  </div>
+                  {error() && <div class="alert alert-danger" role="alert">{error()}</div>}
+                  <div class="d-grid">
+                      <Button text={pending() ? "Connexion..." : "Se connecter"} color={"primary"} action={undefined} type={"submit"}></Button>
+                  </div>
+              </form>
             </div>
-            <div>
-                <Input displayName={"mot de passe"} name={"password"} id={"password"} required={true} classes={undefined} value={undefined} type={"password"} placeholder={undefined}></Input>
+            <div class="card-footer text-center small">
+              Pas encore de compte ?{" "}
+              <A href="/register">Créer un compte</A>
             </div>
-            {error() && <p class="login-error">{error()}</p>}
-            <Button text={pending() ? "Connexion..." : "Se connecter"} color={"primary"} action={undefined} type={"submit"}></Button>
-        </form>
-
-        <p>
-            Pas encore de compte ?{" "}
-            <A href="/register">Créer un compte</A>
-        </p>
-      </>
+          </div>
+        </div>
+      </div>
     );
 }
 
