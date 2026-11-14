@@ -1,0 +1,6 @@
+// Import change of variables
+@import "variables.scss";
+// Import Bootstrap
+@import "bootstrap/scss/bootstrap";
+// Overrides of the bootstrap classes
+@import "./overrides.scss";
