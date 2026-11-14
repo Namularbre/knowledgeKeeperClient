@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import {User} from "../../features/auth/types.ts";
+import type {User} from "../../types/user.ts";
 
 export async function login(email: string, password: string): Promise<void> {
     await invoke("login", { email, password });
