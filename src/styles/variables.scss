@@ -1,0 +1,48 @@
+// 1. Définition des couleurs personnalisées avec les noms exacts demandés
+$prussian-blue:  #0d1b32ff;
+$alabaster-grey: #dbe3e7ff;
+$ocean-mist:     #55c2aeff;
+$golden-sand:    #dbc858ff;
+$brown-red:      #9b3431ff;
+$jungle-teal:    #228872ff;
+$sandy-brown:    #fca657ff;
+$baltic-blue:    #26619cff;
+$cinnamon-wood:  #bf734aff;
+
+// 2. Surcharges des variables Bootstrap globales
+$primary:   $baltic-blue;
+$secondary: $cinnamon-wood;
+$success:   $jungle-teal;
+$info:      $ocean-mist;
+$warning:   $golden-sand;
+$danger:    $brown-red;
+$light:     $alabaster-grey;
+$dark:      $prussian-blue;
+
+// Personnalisation de l'arrière-plan du corps et du texte
+$body-bg:    #f8f9fa;
+$body-color: $prussian-blue;
+
+// 3. Redéfinition et extension de la palette sémantique ($theme-colors)
+$theme-colors: (
+// Noms standard Bootstrap
+"primary":        $primary,
+"secondary":      $secondary,
+"success":        $success,
+"info":           $info,
+"warning":        $warning,
+"danger":         $danger,
+"light":          $light,
+"dark":           $dark,
+
+// Noms de couleurs personnalisés exacts
+"prussian-blue":  $prussian-blue,
+"alabaster-grey": $alabaster-grey,
+"ocean-mist":     $ocean-mist,
+"golden-sand":    $golden-sand,
+"brown-red":      $brown-red,
+"jungle-teal":    $jungle-teal,
+"sandy-brown":    $sandy-brown,
+"baltic-blue":    $baltic-blue,
+"cinnamon-wood":  $cinnamon-wood
+);

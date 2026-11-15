@@ -93,6 +93,24 @@ impl HttpAuthClient {
         }
     }
 
+    /// Révoque le refresh token côté API (route idempotente, 204 en cas de succès).
+    pub async fn logout(&self, refresh_token: &str) -> Result<(), AuthError> {
+        let resp = self
+            .http
+            .post(format!("{}{}", self.base_url, "/auth/logout"))
+            .json(&serde_json::json!({ "refresh_token": refresh_token }))
+            .send()
+            .await
+            .map_err(|e| AuthError::Network(e.to_string()))?;
+
+        match resp.status() {
+            reqwest::StatusCode::NO_CONTENT => Ok(()),
+            reqwest::StatusCode::BAD_REQUEST => Err(AuthError::InvalidRequest),
+            reqwest::StatusCode::UNAUTHORIZED => Err(AuthError::InvalidRefreshToken),
+            status => Err(AuthError::Unexpected(format!("unexpected status {status}"))),
+        }
+    }
+
     async fn exchange_credentials(&self, path: &str, body: &serde_json::Value) -> Result<TokenPair, AuthError> {
         let resp = self
             .http

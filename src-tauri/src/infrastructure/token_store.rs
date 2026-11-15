@@ -47,4 +47,12 @@ impl StrongholdTokenStore {
         Ok(bytes.map(|b| String::from_utf8_lossy(&b).to_string()))
     }
 
+    pub fn delete_refresh_token(&self) -> Result<(), AuthError> {
+        let client = self.client()?;
+        client
+            .store()
+            .delete(REFRESH_TOKEN_KEY)
+            .map_err(|e| AuthError::Storage(e.to_string()))?;
+        self.stronghold.save().map_err(|e| AuthError::Storage(e.to_string()))
+    }
 }

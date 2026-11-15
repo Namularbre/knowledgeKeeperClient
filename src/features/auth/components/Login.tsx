@@ -1,55 +1,47 @@
-import {createSignal} from "solid-js";
+import {Show} from "solid-js";
 import {A, useNavigate} from "@solidjs/router";
-import {Input} from "../../../components/Input.tsx";
-import {Button} from "../../../components/Button.tsx";
-import {login} from "../../../services/tauri/client";
+import {Button} from "solid-bootstrap";
+import {FormField} from "../../../components/FormField.tsx";
+import {createSubmit} from "../../../primitives/createSubmit.ts";
+import {useAuth} from "../AuthProvider.tsx";
 import "./Login.css";
-import {loadCurrentUser} from "../session.ts";
 
 function Login() {
     const navigate = useNavigate();
-    const [error, setError] = createSignal<string | null>(null);
-    const [pending, setPending] = createSignal(false);
+    const auth = useAuth();
 
-    const handleSubmit = async (e: Event) => {
-        e.preventDefault();
-        const form = e.target as HTMLFormElement;
-        const email = (form.elements.namedItem("email") as HTMLInputElement).value;
-        const password = (form.elements.namedItem("password") as HTMLInputElement).value;
-
-        setPending(true);
-        setError(null);
-        try {
-            await login(email, password);
-            await loadCurrentUser();
-            navigate("/");
-        } catch (err) {
-            setError(String(err));
-        } finally {
-            setPending(false);
-        }
-    };
+    const {pending, error, onSubmit} = createSubmit(async (data) => {
+        await auth.login(String(data.get("email")), String(data.get("password")));
+        navigate("/");
+    });
 
     return (
-      <>
-        <h1>Connexion</h1>
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h1 class="h3 text-center mb-4">Connexion</h1>
 
-        <form onsubmit={handleSubmit}>
-            <div>
-                <Input displayName={"email"} name={"email"} id={"email"} required={true} classes={undefined} value={undefined} type={"text"} placeholder={"Ex: jean.dupont@example.com"}></Input>
+              <form onSubmit={onSubmit}>
+                  <FormField label="Email" name="email" id="email" type="email" autocomplete="email" required placeholder="Ex: jean.dupont@example.com"/>
+                  <FormField label="Mot de passe" name="password" id="password" type="password" autocomplete="current-password" required/>
+                  <Show when={error()}>
+                      <div class="alert alert-danger" role="alert">{error()}</div>
+                  </Show>
+                  <div class="d-grid">
+                      <Button type="submit" disabled={pending()}>
+                          {pending() ? "Connexion..." : "Se connecter"}
+                      </Button>
+                  </div>
+              </form>
             </div>
-            <div>
-                <Input displayName={"mot de passe"} name={"password"} id={"password"} required={true} classes={undefined} value={undefined} type={"password"} placeholder={undefined}></Input>
+            <div class="card-footer text-center small">
+              Pas encore de compte ?{" "}
+              <A href="/register">Créer un compte</A>
             </div>
-            {error() && <p class="login-error">{error()}</p>}
-            <Button text={pending() ? "Connexion..." : "Se connecter"} color={"primary"} action={undefined} type={"submit"}></Button>
-        </form>
-
-        <p>
-            Pas encore de compte ?{" "}
-            <A href="/register">Créer un compte</A>
-        </p>
-      </>
+          </div>
+        </div>
+      </div>
     );
 }
 
