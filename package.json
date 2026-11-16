@@ -1,7 +1,7 @@
 {
   "name": "knowledgekeeperclient",
   "version": "0.1.0",
-  "description": "",
+  "description": "Client Knowledge Keeper",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -21,8 +21,7 @@
     "@tauri-apps/plugin-opener": "^2",
     "bootstrap": "^5.3.9",
     "solid-bootstrap": "^1.0.21",
-    "solid-js": "^1.9.3",
-    "theme_kk": "github:Namularbre/theme_knowledgekeeper"
+    "solid-js": "^1.9.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
